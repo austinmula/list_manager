@@ -8,6 +8,7 @@
 import React, {useState} from 'react';
 import {
   Button,
+  FlatList,
   Image,
   SafeAreaView,
   StatusBar,
@@ -39,7 +40,12 @@ function App() {
     if (image?.uri && caption) {
       setData(prev => [...prev, {image: image?.uri, caption}]);
       setImage(null);
+      onChangeCaption('');
     }
+  };
+
+  handleDelete = caption => {
+    setData(data.filter(item => item.caption !== caption));
   };
 
   return (
@@ -80,11 +86,36 @@ function App() {
         </View>
       ) : (
         <View>
-          {data.map(item => (
+          <FlatList
+            data={data}
+            renderItem={({item}) => (
+              <View style={styles.card}>
+                <Image source={{uri: item.image, width: '100%', height: 200}} />
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexDirection: 'row',
+                    paddingHorizontal: 15,
+                    backgroundColor: '#f3f3f3',
+                    flex: 1,
+                  }}>
+                  <Text style={{fontSize: 20}}>{item.caption}</Text>
+                  <Button
+                    title="Delete"
+                    color={'red'}
+                    onPress={() => handleDelete(item.caption)}
+                  />
+                </View>
+              </View>
+            )}
+          />
+
+          {/* {data.map((item, index) => (
             <View>
-              <Text>{item.caption}</Text>
+              <Text key={index}>{item.caption}</Text>
             </View>
-          ))}
+          ))} */}
         </View>
       )}
     </SafeAreaView>
@@ -100,6 +131,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  card: {
+    elevation: 4,
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    height: 300,
+    marginBottom: 15,
   },
   buttonText: {
     fontWeight: 800,
